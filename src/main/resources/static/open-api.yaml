@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Swagger repositories - OpenAPI 3.0
+  description: |-
+    This is a sample rest service to list non-forked repositories for a GitHub user.
+  termsOfService: http://swagger.io/terms/
+  version: 1.0.11
+  contact:
+    email: josemario2794@gmail.com
+tags:
+  - name: repositories
+    description: List repositories
+paths:
+  /repositories/{username}:
+    get:
+      tags:
+        - repositories
+      summary: List repositories for a user
+      description: 'List repositories for a user'
+      operationId: getRepositoriesByUsername
+      parameters:
+        - name: username
+          in: path
+          description: 'Name of the user from which repositories will be listed'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RepositoryInfo'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RepositoryInfo'
+        '404':
+          description: Not supported header
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+        '406':
+          description: User name not found
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+        '500':
+          description: Error listing repositories
+components:
+  schemas:
+    BranchInfo:
+      required:
+        -commit
+        -name
+      type: object
+      properties:
+        name:
+          type: string
+        commit:
+          type: string
+    RepositoryInfo:
+      required:
+        -branchInfos
+        -repoName
+        -userName
+      type: object
+      properties:
+        repoName:
+          type: string
+        userName:
+          type: string
+        branchInfos:
+          type: array
+          items:
+            $ref: "#/components/schemas/BranchInfo"
+    ErrorInfo:
+      required: status
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
